@@ -1,9 +1,10 @@
 from src.countries import Country
-from src.shipping import calculate_shipping
+from src.shipping import calculate_shipping, get_region_by_country
 
 
 def print_shipping_costs(country, order_total):
-    shipping = calculate_shipping(country, order_total)
+    region = get_region_by_country(country)
+    shipping = calculate_shipping(region, order_total)
     print(f'Shipping cost to {country} for order total £{order_total} is £{shipping}')
 
 
