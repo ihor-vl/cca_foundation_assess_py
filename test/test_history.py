@@ -17,11 +17,12 @@ def compare_history(orders, history_orders_after_confirmation):
 
 
 @pytest.mark.parametrize(
-    "orders, history_orders_after_confirmation"
+    "orders, history_orders_after_confirmation",
+    []
 )
 @pytest.mark.skip(reason="Not ready yet")
-def test_add_order(order,  history_orders_after_confirmation):
+def test_add_order(orders, history_orders_after_confirmation):
     history = SalesHistory(orders=[])
-    history.add_order(order)
+    history.add_order(orders)
 
     compare_history(history.orders, history_orders_after_confirmation)
