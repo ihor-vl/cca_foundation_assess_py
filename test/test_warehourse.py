@@ -97,3 +97,28 @@ def test_update_entry_info():
 def test_check_stock(catalogue, product_id, expected_stock):
     warehouse = Warehouse(catalogue=catalogue)
     assert warehouse.check_stock(product_id) == expected_stock
+
+
+@pytest.mark.parametrize(
+    "catalogue,product_id,quantity_to_deduct,expected_stock",
+    [
+        pytest.param(
+            [Entry(Product(1, "dummy-description", 10.0), 10)],
+            1,
+            7,
+            3,
+            id="Adjust stock for a product that exists in the catalogue"
+        ),
+        pytest.param(
+            [Entry(Product(1, "dummy-description", 10.0), 10)],
+            2,
+            9000,
+            0,
+            id="Adjust stock for a product that does not exist in the catalogue"
+        ),
+    ]
+)
+def test_adjust_stock(catalogue, product_id, quantity_to_deduct, expected_stock):
+    warehouse = Warehouse(catalogue=catalogue)
+    warehouse.adjust_stock(product_id, quantity_to_deduct)
+    assert warehouse.check_stock(product_id) == expected_stock

@@ -53,3 +53,11 @@ class Warehouse:
         if entry:
             return entry.stock
         return 0
+
+    def adjust_stock(self, product_id: int, quantity: int) -> None:
+        entry = next(
+            (entry for entry in self.catalogue if entry.product.id == product_id),
+            None
+        )
+        if entry:
+            entry.stock -= quantity
