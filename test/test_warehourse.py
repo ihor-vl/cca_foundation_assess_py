@@ -75,3 +75,25 @@ def test_update_entry_info():
     assert entry.product.description == "new-dummy-description"
     assert entry.product.price == 12.0
     assert entry.stock == 15
+
+
+@pytest.mark.parametrize(
+    "catalogue,product_id,expected_stock",
+    [
+        pytest.param(
+            [Entry(Product(1, "dummy-description", 10.0), 10)],
+            1,
+            10,
+            id="Check stock for a product that exists in the catalogue"
+        ),
+        pytest.param(
+            [Entry(Product(1, "dummy-description", 10.0), 10)],
+            2,
+            0,
+            id="Check stock for a product that does not exist in the catalogue"
+        ),
+    ]
+)
+def test_check_stock(catalogue, product_id, expected_stock):
+    warehouse = Warehouse(catalogue=catalogue)
+    assert warehouse.check_stock(product_id) == expected_stock

@@ -44,3 +44,12 @@ class Warehouse:
             entry_in_catalogue.update_info(product_description, product_price, quantity)
         else:
             self.catalogue.append(entry)
+
+    def check_stock(self, product_id: int) -> int:
+        entry = next(
+            (entry for entry in self.catalogue if entry.product.id == product_id),
+            None
+        )
+        if entry:
+            return entry.stock
+        return 0
