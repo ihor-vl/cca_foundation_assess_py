@@ -19,9 +19,11 @@ SHIPPING_RATES_BY_REGION = {
     }
 }
 
+URL_TEMPLATE = "https://npovmrfcyzu2gu42pmqa7zce6a0zikbf.lambda-url.eu-west-2.on.aws/?country={country}"
+
 
 def get_region_by_country(country):
-    url = "https://npovmrfcyzu2gu42pmqa7zce6a0zikbf.lambda-url.eu-west-2.on.aws/?country=" + country
+    url = URL_TEMPLATE.format(country=country)
 
     response = requests.get(url)
     response.raise_for_status()
