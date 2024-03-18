@@ -10,3 +10,6 @@ class Product:
     def update_info(self, description, price):
         self.description = description
         self.price = price
+
+    def get_price(self):
+        return self.price

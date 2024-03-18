@@ -12,6 +12,12 @@ class Item:
     product: Product
     quantity: int
 
+    def get_cost(self) -> float:
+        return self.product.get_price() * self.quantity
+
+    def contains_product(self, product_id: int) -> bool:
+        return self.product.id == product_id
+
 
 @dataclass
 class Order:
@@ -30,7 +36,7 @@ class Order:
     def total(self) -> float:
         total = 0.0
         for item in self.items:
-            total += item.product.price * item.quantity
+            total += item.get_cost()
         region = self.get_region()
         shipping_cost = calculate_shipping(region, total)
         return total + shipping_cost
@@ -50,7 +56,7 @@ class Order:
         return self.region_getter(self.shipping_address.country)
 
     def contains_product(self, product_id: int) -> bool:
-        return any(item.product.id == product_id for item in self.items)
+        return any(item.contains_product(product_id) for item in self.items)
 
     def contains_address(self, house, street, city, postcode, country) -> bool:
         return self.shipping_address.matches(house, street, city, postcode, country)
