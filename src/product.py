@@ -7,3 +7,6 @@ class Product:
     description: str
     price: float
 
+    def update_info(self, description, price):
+        self.description = description
+        self.price = price
