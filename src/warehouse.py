@@ -17,6 +17,13 @@ class Entry:
         product = Product(product_id, product_description, product_price)
         return Entry(product, quantity)
 
+    def update_info(self,
+                    product_description: str,
+                    product_price: float,
+                    quantity: int) -> None:
+        self.product.update_info(product_description, product_price)
+        self.stock += quantity
+
 
 @dataclass
 class Warehouse:
@@ -34,8 +41,6 @@ class Warehouse:
             None
         )
         if entry_in_catalogue:
-            entry_in_catalogue.stock += quantity
-            entry_in_catalogue.description = product_description
-            entry_in_catalogue.price = product_price
+            entry_in_catalogue.update_info(product_description, product_price, quantity)
         else:
             self.catalogue.append(entry)

@@ -22,7 +22,6 @@ def compare_catalogues(catalogue_under_test, expected_catalogue):
         assert entry.product.price == expected_item.product.price
 
 
-
 @dataclass
 class ReceiveStockInput:
     product_id: int
@@ -67,3 +66,12 @@ def test_receive_stock(receive_stock_input, warehouse_catalogue, expected_wareho
     )
 
     compare_catalogues(warehouse.catalogue, expected_warehouse_catalogue)
+
+
+def test_update_entry_info():
+    entry = Entry(Product(1, "dummy-description", 10.0), 10)
+    entry.update_info("new-dummy-description", 12.0, 5)
+    assert entry.product.id == 1
+    assert entry.product.description == "new-dummy-description"
+    assert entry.product.price == 12.0
+    assert entry.stock == 15
