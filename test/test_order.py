@@ -83,3 +83,100 @@ def test_add_item(order, product_ids, quantities, warehouse, expected_items):
     for product_id, quantity in zip(product_ids, quantities):
         order.add_item(product_id, quantity, warehouse)
     compare_items(order.items, expected_items)
+
+
+@pytest.mark.parametrize(
+    "order, expected_total",
+    [
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UKRAINE.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 10),
+                    Item(Product(2, "another-dummy-description", 12.0), 7),
+                ],
+                region_getter=lambda country: "EU"
+            ),
+            188.99,
+            id="Calculate total for 2 items in Europe over 100.00"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UKRAINE.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 5),
+                ],
+                region_getter=lambda country: "EU"
+            ),
+            58.99,
+            id="Calculate total for 1 item in Europe under 100.00"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UNITED_KINGDOM.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 10),
+                ],
+                region_getter=lambda country: "UK"
+            ),
+            104.99,
+            id="Calculate total for 1 item in UK below 120.00"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UNITED_KINGDOM.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 10),
+                    Item(Product(2, "dummy-description-2", 2.0), 17),
+                    Item(Product(3, "dummy-description-3", 12.0), 2),
+                ],
+                region_getter=lambda country: "UK"
+            ),
+            158.00,
+            id="Calculate total for 3 items in UK over 120.00"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.ALBANIA.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 18),
+                ],
+                region_getter=lambda country: "OTHER"
+            ),
+            189.99,
+            id="Calculate total for 1 item in OTHER below 200.00"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.ALBANIA.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 18),
+                    Item(Product(2, "anoter-dummy-description", 20.0), 3),
+                ],
+                region_getter=lambda country: "OTHER"
+            ),
+            245.99,
+            id="Calculate total for 2 items in OTHER over 200.00"
+        ),
+    ],
+)
+def test_total(order, expected_total):
+    assert order.total() == expected_total

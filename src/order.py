@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+from typing import Callable
 
 from address import Address
 from product import Product
+from src.shipping import get_region_by_country, calculate_shipping
 from src.warehouse import Warehouse
 
 
@@ -15,6 +17,7 @@ class Item:
 class Order:
     shipping_address: Address
     items: list[Item]
+    region_getter: Callable = get_region_by_country
 
     def add_item(self, product_id: int, quantity: int, warehouse: Warehouse) -> None:
         if warehouse.check_stock(product_id) < quantity:
@@ -25,7 +28,15 @@ class Order:
             self.items.append(Item(product, quantity))
 
     def total(self) -> float:
-        pass
+        total = 0.0
+        for item in self.items:
+            total += item.product.price * item.quantity
+        region = self.get_region()
+        shipping_cost = calculate_shipping(region, total)
+        return total + shipping_cost
 
     def confirm(self) -> None:
         pass
+
+    def get_region(self):
+        return self.region_getter(self.shipping_address.country)
