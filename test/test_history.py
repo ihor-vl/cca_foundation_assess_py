@@ -138,6 +138,33 @@ def test_add_order(history, orders, history_orders_after_confirmation):
             ],
             id="List orders by product id"
         ),
+        pytest.param(
+            SalesHistory(orders=[
+                Order(
+                    shipping_address=Address(
+                        "dummy-house", "dummy-street",
+                        "dummy-city", "dummy-zip", Country.UNITED_KINGDOM.value
+                    ),
+                    items=[
+                        Item(Product(1, "dummy-description-1", 12.0), 35),
+                        Item(Product(2, "another-dummy-description-1", 15.0), 4),
+                    ],
+                ),
+                Order(
+                    shipping_address=Address(
+                        "dummy-house", "dummy-street",
+                        "dummy-city", "dummy-zip", Country.UKRAINE.value
+                    ),
+                    items=[
+                        Item(Product(3, "dummy-description-2", 10.0), 10),
+                        Item(Product(4, "another-dummy-description-3", 12.0), 7),
+                    ],
+                ),
+            ]),
+            15,
+            [],
+            id="List orders by product id, no orders found"
+        ),
     ]
 )
 def test_list_orders_by_product(history, product_id, expected_orders):
@@ -188,6 +215,37 @@ def test_list_orders_by_product(history, product_id, expected_orders):
                 ),
             ],
             id="List orders by address"
+        ),
+        pytest.param(
+            SalesHistory(orders=[
+                Order(
+                    shipping_address=Address(
+                        "dummy-house", "dummy-street",
+                        "dummy-city", "dummy-zip", Country.UNITED_KINGDOM.value
+                    ),
+                    items=[
+                        Item(Product(1, "dummy-description-1", 12.0), 35),
+                        Item(Product(2, "another-dummy-description-1", 15.0), 4),
+                    ],
+                ),
+                Order(
+                    shipping_address=Address(
+                        "dummy-house", "dummy-street",
+                        "dummy-city", "dummy-zip", Country.UKRAINE.value
+                    ),
+                    items=[
+                        Item(Product(3, "dummy-description-2", 10.0), 10),
+                        Item(Product(4, "another-dummy-description-3", 12.0), 7),
+                    ],
+                ),
+            ]),
+            "dummy-house-1",
+            "dummy-street",
+            "dummy-city",
+            "dummy-zip",
+            Country.UKRAINE.value,
+            [],
+            id="List orders by address, no orders found"
         ),
     ]
 )
