@@ -61,3 +61,12 @@ class Warehouse:
         )
         if entry:
             entry.stock -= quantity
+
+    def get_product(self, product_id: int) -> Product | None:
+        entry = next(
+            (entry for entry in self.catalogue if entry.product.id == product_id),
+            None
+        )
+        if entry:
+            return entry.product
+        return None

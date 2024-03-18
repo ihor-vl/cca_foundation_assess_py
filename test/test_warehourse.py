@@ -122,3 +122,25 @@ def test_adjust_stock(catalogue, product_id, quantity_to_deduct, expected_stock)
     warehouse = Warehouse(catalogue=catalogue)
     warehouse.adjust_stock(product_id, quantity_to_deduct)
     assert warehouse.check_stock(product_id) == expected_stock
+
+
+@pytest.mark.parametrize(
+    "catalogue,product_id,expected_result",
+    [
+        pytest.param(
+            [Entry(Product(1, "dummy-description", 10.0), 10)],
+            1,
+            Product(1, "dummy-description", 10.0),
+            id="Get product that exists in the catalogue"
+        ),
+        pytest.param(
+            [Entry(Product(1, "dummy-description", 10.0), 10)],
+            2,
+            None,
+            id="Get product that does not exist in the catalogue"
+        ),
+    ]
+)
+def test_get_product(catalogue, product_id, expected_result):
+    warehouse = Warehouse(catalogue=catalogue)
+    assert warehouse.get_product(product_id) == expected_result
