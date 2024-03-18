@@ -51,3 +51,6 @@ class Order:
 
     def contains_product(self, product_id: int) -> bool:
         return any(item.product.id == product_id for item in self.items)
+
+    def contains_address(self, house, street, city, postcode, country) -> bool:
+        return self.shipping_address.matches(house, street, city, postcode, country)
