@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Self
 
 from product import Product
 
@@ -14,7 +13,7 @@ class Entry:
                    product_id: int,
                    product_description: str,
                    product_price: float,
-                   quantity: int) -> Self:
+                   quantity: int) -> 'Entry':
         product = Product(product_id, product_description, product_price)
         return Entry(product, quantity)
 
