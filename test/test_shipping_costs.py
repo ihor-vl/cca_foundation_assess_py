@@ -11,6 +11,7 @@ def compare_golden_master(stdout_lines, expected_results):
         assert line == expected
 
 
+@pytest.mark.skip(reason="No need in this test anymore, as legacy logic is changed")
 def test_shipping_costs_match_expected_results():
     with open('test/existing_shipping_cost_results.txt') as file:
         expected_shipping_costs = file.read().splitlines()
@@ -25,11 +26,13 @@ def test_shipping_costs_match_expected_results():
     'region, order_total, expected_shipping_cost',
     [
         ('UK', 99.99, 4.99),
-        ('UK', 100.00, 0.0),
+        ('UK', 100.00, 4.99),
+        ('UK', 119.99, 4.99),
+        ('UK', 120.00, 0.0),
         ('EU', 99.99, 8.99),
         ('EU', 100.00, 4.99),
-        ('OTHER', 99.99, 9.99),
-        ('OTHER', 100.00, 9.99),
+        ('OTHER', 199.99, 9.99),
+        ('OTHER', 200.00, 5.99),
     ]
 )
 def test_shipping_costs(region, order_total, expected_shipping_cost):
