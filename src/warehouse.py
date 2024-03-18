@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Self
+
 from product import Product
 
 
@@ -7,8 +9,34 @@ class Entry:
     product: Product
     stock: int
 
+    @classmethod
+    def init_entry(cls,
+                   product_id: int,
+                   product_description: str,
+                   product_price: float,
+                   quantity: int) -> Self:
+        product = Product(product_id, product_description, product_price)
+        return Entry(product, quantity)
+
 
 @dataclass
 class Warehouse:
-    catalogue: list[Entry]
+    catalogue: list[Entry] = field(default_factory=list)
 
+    def receive_stock(self,
+                      product_id: int,
+                      product_description: str,
+                      product_price: float,
+                      quantity: int) -> None:
+
+        entry = Entry.init_entry(product_id, product_description, product_price, quantity)
+        entry_in_catalogue = next(
+            (entry for entry in self.catalogue if entry.product.id == product_id),
+            None
+        )
+        if entry_in_catalogue:
+            entry_in_catalogue.stock += quantity
+            entry_in_catalogue.description = product_description
+            entry_in_catalogue.price = product_price
+        else:
+            self.catalogue.append(entry)
