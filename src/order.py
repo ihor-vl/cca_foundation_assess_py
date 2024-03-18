@@ -35,8 +35,9 @@ class Order:
         shipping_cost = calculate_shipping(region, total)
         return total + shipping_cost
 
-    def confirm(self) -> None:
-        pass
+    def confirm(self, warehouse) -> None:
+        for item in self.items:
+            warehouse.adjust_stock(item.product.id, item.quantity)
 
     def get_region(self):
         return self.region_getter(self.shipping_address.country)

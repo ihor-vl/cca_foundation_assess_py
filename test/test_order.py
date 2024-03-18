@@ -180,3 +180,72 @@ def test_add_item(order, product_ids, quantities, warehouse, expected_items):
 )
 def test_total(order, expected_total):
     assert order.total() == expected_total
+
+
+@pytest.mark.parametrize(
+    "order, warehouse, warehouse_after_confirmation",
+    [
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UKRAINE.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 10),
+                    Item(Product(2, "another-dummy-description", 12.0), 7),
+                ]
+            ),
+            Warehouse(catalogue=[
+                Entry(Product(1, "dummy-description", 10.0), 10),
+                Entry(Product(2, "another-dummy-description", 12.0), 13),
+            ]),
+            Warehouse(catalogue=[
+                Entry(Product(1, "dummy-description", 10.0), 0),
+                Entry(Product(2, "another-dummy-description", 12.0), 6),
+            ]),
+            id="Confirm order with 2 items"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UKRAINE.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 8),
+                ]
+            ),
+            Warehouse(catalogue=[
+                Entry(Product(1, "dummy-description", 10.0), 10),
+            ]),
+            Warehouse(catalogue=[
+                Entry(Product(1, "dummy-description", 10.0), 2),
+            ]),
+            id="Confirm order with 1 item"
+        ),
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UKRAINE.value
+                ),
+                items=[]
+            ),
+            Warehouse(catalogue=[
+                Entry(Product(1, "dummy-description", 10.0), 12),
+            ]),
+            Warehouse(catalogue=[
+                Entry(Product(1, "dummy-description", 10.0), 12),
+            ]),
+            id="Confirm order with no items"
+        ),
+    ]
+)
+def test_confirm(order, warehouse, warehouse_after_confirmation):
+    order.confirm(warehouse)
+    for item in order.items:
+        assert (
+            warehouse.check_stock(item.product.id)
+            == warehouse_after_confirmation.check_stock(item.product.id)
+        )
