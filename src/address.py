@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import Enum
 
 from src.countries import Country
 
@@ -11,4 +10,3 @@ class Address:
     city: str
     postcode: str
     country: Country
-
