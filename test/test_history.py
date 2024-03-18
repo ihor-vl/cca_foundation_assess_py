@@ -5,16 +5,7 @@ from src.countries import Country
 from src.history import SalesHistory
 from src.order import Order, Item
 from src.product import Product
-from test.utils import compare_items
-
-
-def compare_history(orders, history_orders_after_confirmation):
-    assert len(orders) == len(history_orders_after_confirmation)
-    for i, order in enumerate(orders):
-        expected_order = history_orders_after_confirmation[i]
-        assert expected_order.shipping_address == order.shipping_address
-        assert order.shipping_address == expected_order.shipping_address
-        compare_items(order.items, expected_order.items)
+from test.utils import compare_history
 
 
 @pytest.mark.parametrize(

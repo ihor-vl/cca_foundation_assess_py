@@ -1,11 +1,12 @@
 import pytest
 
 from src.countries import Country
+from src.history import SalesHistory
 from src.order import Order, Item
 from src.product import Product
 from src.warehouse import Warehouse, Entry
 from src.address import Address
-from test.utils import compare_items
+from test.utils import compare_items, compare_history
 
 
 @pytest.mark.parametrize(
@@ -234,3 +235,41 @@ def test_adjust(order, warehouse, warehouse_after_confirmation):
             warehouse.check_stock(item.product.id)
             == warehouse_after_confirmation.check_stock(item.product.id)
         )
+
+
+@pytest.mark.parametrize(
+    "order, history, history_after_confirmation",
+    [
+        pytest.param(
+            Order(
+                shipping_address=Address(
+                    "dummy-house", "dummy-street",
+                    "dummy-city", "dummy-zip", Country.UKRAINE.value
+                ),
+                items=[
+                    Item(Product(1, "dummy-description", 10.0), 10),
+                    Item(Product(2, "another-dummy-description", 12.0), 7),
+                ]
+            ),
+            SalesHistory(orders=[]),
+            SalesHistory(
+                orders=[
+                    Order(
+                        shipping_address=Address(
+                            "dummy-house", "dummy-street",
+                            "dummy-city", "dummy-zip", Country.UKRAINE.value
+                        ),
+                        items=[
+                            Item(Product(1, "dummy-description", 10.0), 10),
+                            Item(Product(2, "another-dummy-description", 12.0), 7),
+                        ]
+                    ),
+                ]
+            ),
+            id="Confirm order with 1 item"
+        ),
+    ]
+)
+def test_log_history(order, history, history_after_confirmation):
+    order.log_history(history)
+    compare_history(history.orders, history_after_confirmation.orders)
