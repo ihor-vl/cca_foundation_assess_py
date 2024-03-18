@@ -7,4 +7,4 @@ class SalesHistory:
     orders: list[Order]
 
     def add_order(self, order: Order) -> None:
-        pass
+        self.orders.append(order)
