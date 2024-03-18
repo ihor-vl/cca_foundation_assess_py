@@ -48,3 +48,6 @@ class Order:
 
     def get_region(self):
         return self.region_getter(self.shipping_address.country)
+
+    def contains_product(self, product_id: int) -> bool:
+        return any(item.product.id == product_id for item in self.items)

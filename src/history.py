@@ -11,8 +11,7 @@ class SalesHistory:
 
     def list_orders_by_product(self, product_id: int) -> list[Order]:
         return [
-            order for order in self.orders
-            if any(item.product.id == product_id for item in order.items)
+            order for order in self.orders if order.contains_product(product_id)
         ]
 
     def list_orders_by_address(self, house, street, city, postcode, country) -> list[Order]:
